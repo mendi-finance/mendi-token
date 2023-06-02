@@ -1,2 +1,3 @@
-# mendi-token
-Mendi token contracts
+# Mendi Finance - Mendi Token
+
+A governance token.

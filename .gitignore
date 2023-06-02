@@ -1,0 +1,21 @@
+artifacts
+cache
+node_modules
+networks
+
+## key
+.accounts.json
+_notes.txt
+
+
+# environment
+.env
+
+# build files
+dist
+typechain-types
+coverage
+coverage.json
+
+# MACOS
+.DS_Store

@@ -1,0 +1,35 @@
+{
+    "name": "@mendi-finance/mendi-token",
+    "version": "0.0.1",
+    "description": "The Mendi Token",
+    "main": "index.js",
+    "scripts": {
+        "test": "npx hardhat test",
+        "coverage": "npx hardhat coverage",
+        "compile": "npx hardhat compile",
+        "build": "npm run compile && npx tsc",
+        "dev": "remixd -s $(pwd) --remix-ide https://remix.ethereum.org"
+    },
+    "author": "Mendi Finance",
+    "license": "UNLICENSED",
+    "devDependencies": {
+        "@nomicfoundation/hardhat-network-helpers": "^1.0.6",
+        "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
+        "@nomiclabs/hardhat-waffle": "^2.0.3",
+        "@openzeppelin/contracts": "^4.8.0",
+        "@openzeppelin/contracts-upgradeable": "^4.8.0",
+        "@openzeppelin/hardhat-upgrades": "^1.21.0",
+        "@typechain/hardhat": "^6.1.4",
+        "@types/chai": "^4.3.4",
+        "@types/mocha": "^10.0.0",
+        "chai": "^4.3.7",
+        "dotenv": "^16.0.3",
+        "ethereum-waffle": "^3.4.4",
+        "ethers": "^5.7.2",
+        "hardhat-deploy": "^0.11.27",
+        "hardhat-deploy-ethers": "^0.3.0-beta.13",
+        "solidity-coverage": "^0.8.2",
+        "ts-node": "^10.9.1",
+        "@nomicfoundation/hardhat-chai-matchers": "^1.0.6"
+    }
+}
