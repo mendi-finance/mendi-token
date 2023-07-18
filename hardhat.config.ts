@@ -62,7 +62,7 @@ const config: HardhatUserConfig = {
             },
             addresses: {
                 usdc: "0xf56dc6695cF1f5c364eDEbC7Dc7077ac9B586068",
-                msig: "0x1Ed1b93377B6b4Fa4cC7146a06C8912185C9EAb0",
+                msig: "0xE2556B10E11aD8F5c0bE37E3f6A7BE43A4C472b8",
             },
         },
     },

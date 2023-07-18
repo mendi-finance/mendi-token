@@ -6,14 +6,13 @@ const mendiAddress = "0xd86c8d4279ccafbec840c782bcc50d201f277419";
 const liquidityAmount = ethers.utils.parseEther("2500000");
 const vestingAmount = ethers.utils.parseEther("3200000");
 const bonusVestingAmount = ethers.utils.parseEther("300000");
-const periodBegin = 1677445200; // 2023-02-26 9:00:00 PM UTC
+const periodBegin = 1689674400; // 2023-07-18 9:00:00 AM CET
 const periodDuration = 3 * 24 * 60 * 60; // 3 days
 const bonusDuration = 1 * 24 * 60 * 60; // 1 day
-const vestingBegin = 1677715200; // 2023-03-02 12:00:00 AM UTC
+const vestingBegin = 1689944400; // 2023-03-21 12:00:00 AM CET
 const vestingDuration = 1 * 365 * 24 * 60 * 60; // 1 year
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-    return false;
     const addresses = hre.network.config.addresses;
     if (!addresses) throw new Error("No addresses in config");
 
