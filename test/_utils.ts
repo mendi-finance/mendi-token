@@ -42,15 +42,6 @@ const getTokenContract = async (opts: {
     }
 };
 
-const goToFixture = (to: number) => {
-    async function fixture() {
-        ethers.provider.send("evm_setNextBlockTimestamp", [to]);
-        await ethers.provider.send("evm_mine", []);
-    }
-
-    return fixture;
-};
-
 const getImpersonatedSigner = async (account: string) => {
     await network.provider.request({
         method: "hardhat_impersonateAccount",
@@ -72,5 +63,9 @@ const getNetworkConfigValue = (hre: HardhatRuntimeEnvironment, key: string) => {
     return addresses;
 };
 
-export { getImpersonatedSigner, getNetworkConfigValue, getTokenContract, goToFixture, soMath };
-
+export {
+    getImpersonatedSigner,
+    getNetworkConfigValue,
+    getTokenContract,
+    soMath,
+};

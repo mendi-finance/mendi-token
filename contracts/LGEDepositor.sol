@@ -105,6 +105,9 @@ contract LGEDepositor is AccessControl {
     /* Internal Liquidity Functions */
 
     function addLPInternal() internal {
+        approveAllInternal(mendiToken, address(vault));
+        approveAllInternal(usdcToken, address(vault));
+
         run3Internal(
             0,
             mendiUSDCPool,
@@ -119,9 +122,14 @@ contract LGEDepositor is AccessControl {
             AT_MOST,
             0
         );
+
+        removeApproveInternal(mendiToken, address(vault));
+        removeApproveInternal(usdcToken, address(vault));
     }
 
     function stakeLPInternal() internal {
+        approveAllInternal(mendiUSDCPoolToken, address(vault));
+
         run2Internal(
             0,
             mendiUSDCPool,
@@ -133,6 +141,8 @@ contract LGEDepositor is AccessControl {
             AT_MOST,
             0
         );
+
+        removeApproveInternal(mendiUSDCPoolToken, address(vault));
     }
 
     function harvestVCInternal() internal {
@@ -158,6 +168,8 @@ contract LGEDepositor is AccessControl {
     }
 
     function removeLPInternal() internal {
+        approveAllInternal(mendiUSDCPoolToken, address(vault));
+
         run3Internal(
             0,
             mendiUSDCPool,
@@ -172,6 +184,8 @@ contract LGEDepositor is AccessControl {
             EXACTLY,
             int128(int256(mentiUSDCPoolToken.addr().balanceOf(address(this))))
         );
+
+        removeApproveInternal(mendiUSDCPoolToken, address(vault));
     }
 
     function run1Internal(
@@ -283,6 +297,17 @@ contract LGEDepositor is AccessControl {
 
     function sendAllInternal(Token token, address to) internal {
         token.addr().safeTransfer(to, token.addr().balanceOf(address(this)));
+    }
+
+    function approveAllInternal(Token token, address spender) internal {
+        token.addr().safeApprove(
+            spender,
+            token.addr().balanceOf(address(this))
+        );
+    }
+
+    function removeApproveInternal(Token token, address spender) internal {
+        token.addr().safeApprove(spender, 0);
     }
 
     /* Admin Functions */

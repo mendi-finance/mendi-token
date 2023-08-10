@@ -72,6 +72,18 @@ const erc20TokenFixture = deployments.createFixture<
     return [tokenContract];
 });
 
+type LGEFixtureOutput = [Contract, Contract];
+type LGEFixtureOptions = {};
+const lgeFixture = deployments.createFixture<
+    LGEFixtureOutput,
+    LGEFixtureOptions
+>(async ({ deployments, companionNetworks }, options) => {
+    const liquidityGenerator = await ethers.getContract("LiquidityGenerator");
+    const lgeDepositor = await ethers.getContract("LGEDepositor");
+
+    return [liquidityGenerator, lgeDepositor];
+});
+
 const teamVestingFixture = deployments.createFixture(
     async ({ deployments, companionNetworks }, options) => {
         await deployments.fixture(undefined, {
@@ -122,4 +134,4 @@ const teamVestingFixture = deployments.createFixture(
     }
 );
 
-export { erc20TokenFixture, teamVestingFixture };
+export { erc20TokenFixture, lgeFixture, teamVestingFixture };
