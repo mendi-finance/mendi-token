@@ -110,11 +110,11 @@ contract LGEDepositor is AccessControl {
             mendiUSDCPool,
             SWAP,
             mendiToken,
-            ALL,
-            type(int128).max,
+            EXACTLY,
+            int128(int256(mendiToken.addr().balanceOf(address(this)))),
             usdcToken,
-            ALL,
-            type(int128).max,
+            EXACTLY,
+            int128(int256(usdcToken.addr().balanceOf(address(this)))),
             mendiUSDCPoolToken,
             AT_MOST,
             0
@@ -169,8 +169,8 @@ contract LGEDepositor is AccessControl {
             AT_MOST,
             0,
             mendiUSDCPoolToken,
-            ALL,
-            type(int128).max
+            EXACTLY,
+            int128(int256(mentiUSDCPoolToken.addr().balanceOf(address(this))))
         );
     }
 
@@ -191,14 +191,14 @@ contract LGEDepositor is AccessControl {
         ops[0].poolId =
             bytes32(bytes1(method)) |
             bytes32(uint256(uint160(address(pool))));
-        ops[0].tokenInformations = new bytes32[](2);
+        ops[0].tokenInformations = new bytes32[](1);
         ops[0].data = "";
 
         ops[0].tokenInformations[0] =
             bytes32(bytes1(0x00)) |
             bytes32(bytes2(uint16(m1))) |
             bytes32(uint256(uint128(uint256(int256(a1)))));
-        vault.execute{value: value}(tokens, new int128[](2), ops);
+        vault.execute{value: value}(tokens, new int128[](1), ops);
     }
 
     function run2Internal(
