@@ -1,8 +1,8 @@
 import * as dotenv from "dotenv";
 dotenv.config();
 
+import "@nomicfoundation/hardhat-chai-matchers";
 import "@nomicfoundation/hardhat-network-helpers";
-import "@nomiclabs/hardhat-waffle";
 import "@openzeppelin/hardhat-upgrades";
 import "@typechain/hardhat";
 import "hardhat-deploy";
@@ -45,9 +45,24 @@ const config: HardhatUserConfig = {
             },
             autoImpersonate: true,
             gasPrice: 1000000000,
+        },
+        linea: {
+            chainId: 59144,
+            url: process.env.LINEA_RPC_URL,
+            accounts: [process.env.LINEA_DEPLOYER!],
+            verify: {
+                etherscan: {
+                    apiUrl: process.env.LINEA_EXPLORER_API_URL,
+                    apiKey: process.env.LINEA_EXPLORER_API_KEY,
+                },
+            },
             addresses: {
-                usdc: "0xf56dc6695cF1f5c364eDEbC7Dc7077ac9B586068",
-                msig: "0x1Ed1b93377B6b4Fa4cC7146a06C8912185C9EAb0",
+                usdc: "0x176211869ca2b568f2a7d4ee941e073a821ee1ff",
+                msig: "0xe3CDa0A0896b70F0eBC6A1848096529AA7AEe9eE",
+                vc: "0xcc22F6AA610D1b2a0e89EF228079cB3e1831b1D1",
+                vault: "0x1d0188c4B276A09366D05d6Be06aF61a73bC7535",
+                factory: "0xBe6c6A389b82306e88d74d1692B67285A9db9A47",
+                usdcWhale: "0xd5efeedaeadbfaa3c5741010cce8a2cf61df2630",
             },
         },
         linea_goerli: {
@@ -56,13 +71,16 @@ const config: HardhatUserConfig = {
             accounts: [process.env.LINEA_GOERLI_DEPLOYER!],
             verify: {
                 etherscan: {
-                    apiUrl: "https://explorer.goerli.linea.build",
-                    apiKey: "abc",
+                    apiUrl: process.env.LINEA_GOERLI_EXPLORER_API_URL,
+                    apiKey: process.env.LINEA_GOERLI_EXPLORER_API_KEY,
                 },
             },
             addresses: {
-                usdc: "0xf56dc6695cF1f5c364eDEbC7Dc7077ac9B586068",
-                msig: "0xE2556B10E11aD8F5c0bE37E3f6A7BE43A4C472b8",
+                usdc: "",
+                msig: "",
+                vc: "",
+                vault: "",
+                factory: "",
             },
         },
     },

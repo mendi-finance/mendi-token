@@ -8,7 +8,7 @@ describe.skip("Owned Distributor Live", function () {
 
     describe("Constructor", function () {
         it("Should set the correct values", async function () {
-            const { deployer, mendiToken } = await mendiTokenFixture();
+            const [mendiToken] = await mendiTokenFixture();
             const { teamVester, teamDistributor } = await teamVestingFixture();
 
             expect(await teamDistributor.mendi()).to.equal(mendiToken.address);

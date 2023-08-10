@@ -1,6 +1,7 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { BigNumber } from "ethers";
-import { ethers } from "hardhat";
+import { ethers, network } from "hardhat";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 const soMath = {
     clamp(num: number, min: number, max: number) {
@@ -22,7 +23,7 @@ const getTokenContract = async (opts: {
         );
 
         if (opts.whaleAddress) {
-            const whale = await ethers.getImpersonatedSigner(opts.whaleAddress);
+            const whale = await getImpersonatedSigner(opts.whaleAddress);
             const balance = await token.balanceOf(whale.address);
 
             await (
@@ -50,4 +51,26 @@ const goToFixture = (to: number) => {
     return fixture;
 };
 
-export { soMath, getTokenContract, goToFixture };
+const getImpersonatedSigner = async (account: string) => {
+    await network.provider.request({
+        method: "hardhat_impersonateAccount",
+        params: [account],
+    });
+    return ethers.getSigner(account);
+};
+
+const getNetworkConfigValue = (hre: HardhatRuntimeEnvironment, key: string) => {
+    const companionNetwork =
+        hre.companionNetworks?.["mainnet"]?.deployments?.getNetworkName();
+
+    const addresses =
+        hre.network.config?.[key] ??
+        (companionNetwork
+            ? hre.config.networks[companionNetwork]
+            : undefined)?.[key];
+
+    return addresses;
+};
+
+export { getImpersonatedSigner, getNetworkConfigValue, getTokenContract, goToFixture, soMath };
+

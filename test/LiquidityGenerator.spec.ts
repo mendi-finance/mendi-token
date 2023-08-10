@@ -3,7 +3,12 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { BigNumber, Contract } from "ethers";
 import hre, { ethers } from "hardhat";
-import { getTokenContract, goToFixture, soMath } from "./_utils";
+import {
+    getImpersonatedSigner,
+    getTokenContract,
+    goToFixture,
+    soMath,
+} from "./_utils";
 
 const mantissa = ethers.utils.parseEther("1");
 const mendiAmount = ethers.utils.parseEther("2500000");
@@ -459,11 +464,11 @@ const depositParticipant = async (
 };
 
 const makeParticipants = async (admin: SignerWithAddress, count: number) => {
-    const participants = [];
+    const participants: any[] = [];
 
     for (let i = 0; i < count; i++) {
         const participant = ethers.Wallet.createRandom();
-        const signer = await ethers.getImpersonatedSigner(participant.address);
+        const signer = await getImpersonatedSigner(participant.address);
 
         const balance = 1000 + Math.random() * 100;
         const deposit = balance * soMath.clamp(Math.random(), 0.1, 0.5);

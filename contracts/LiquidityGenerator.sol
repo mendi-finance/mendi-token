@@ -3,12 +3,9 @@ pragma solidity ^0.8.10;
 
 import "./interfaces/IERC20.sol";
 import "./interfaces/IOwnedDistributor.sol";
-import "./interfaces/IVelodromeGauge.sol";
-import "./interfaces/IVelodromePairFactory.sol";
-import "./interfaces/IVelodromeRouter.sol";
-import "./interfaces/IVelodromeVoter.sol";
 import "./libraries/SafeMath.sol";
 import "./libraries/SafeToken.sol";
+import "./LGEDepositor.sol";
 
 contract LiquidityGenerator {
     using SafeMath for uint256;
@@ -34,7 +31,6 @@ contract LiquidityGenerator {
     uint256 public immutable periodEnd;
     uint256 public immutable bonusEnd;
     bool public finalized = false;
-    bool public delivered = false;
     address public admin;
     address public pendingAdmin;
     address public reservesManager;
@@ -134,6 +130,10 @@ contract LiquidityGenerator {
     }
 
     function _setReservesManager(address reservesManager_) external {
+        require(
+            getBlockTimestamp() < periodBegin,
+            "LiquidityGenerator: Event Started"
+        );
         require(msg.sender == admin, "LiquidityGenerator: FORBIDDEN");
         require(
             reservesManager_ != address(0),
@@ -149,8 +149,10 @@ contract LiquidityGenerator {
         uint256 blockTimestamp = getBlockTimestamp();
         require(blockTimestamp >= periodEnd, "LiquidityGenerator: TOO_SOON");
 
-        uint256 _amountMendi = mendi.myBalance();
+        uint256 _amountMendi = mendi.balanceOf(reservesManager);
         uint256 _amountUSDC = usdc.balanceOf(reservesManager);
+
+        LGEDepositor(reservesManager).finalize();
 
         finalized = true;
         emit Finalized(_amountMendi, _amountUSDC);
@@ -163,6 +165,10 @@ contract LiquidityGenerator {
         require(amountUSDC >= 1e7, "LiquidityGenerator: INVALID_VALUE"); // minimum 10 USDC
 
         // Pull usdc to reserves manager
+        require(
+            reservesManager != address(0),
+            "LiquidityGenerator: ZERO_ADDRESS_RESERVES"
+        );
         usdc.safeTransferFrom(msg.sender, reservesManager, amountUSDC);
 
         (uint256 _prevSharesBonus, , ) = IOwnedDistributor(bonusDistributor)

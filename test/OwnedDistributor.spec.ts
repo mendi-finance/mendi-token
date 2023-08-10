@@ -3,7 +3,7 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { BigNumber, Contract } from "ethers";
 import { ethers } from "hardhat";
-import { getTokenContract, goToFixture } from "./_utils";
+import { getImpersonatedSigner, getTokenContract, goToFixture } from "./_utils";
 
 interface DeployFixture {
     admin: SignerWithAddress;
@@ -197,11 +197,11 @@ describe("Owned Distributor", function () {
 });
 
 const makeParticipants = async (admin: SignerWithAddress, count: number) => {
-    const participants = [];
+    const participants: any[] = [];
 
     for (let i = 0; i < count; i++) {
         const participant = ethers.Wallet.createRandom();
-        const signer = await ethers.getImpersonatedSigner(participant.address);
+        const signer = await getImpersonatedSigner(participant.address);
 
         const share = Math.random() * 100_000_000;
         const shareEther = share.toFixed(18);

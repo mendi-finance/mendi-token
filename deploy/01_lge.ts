@@ -1,19 +1,19 @@
 import { ethers } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { getNetworkConfigValue } from "../test/_utils";
 
-const mendiAddress = "0xd86c8d4279ccafbec840c782bcc50d201f277419";
 const liquidityAmount = ethers.utils.parseEther("2500000");
 const vestingAmount = ethers.utils.parseEther("3200000");
 const bonusVestingAmount = ethers.utils.parseEther("300000");
-const periodBegin = 1689674400; // 2023-07-18 9:00:00 AM CET
-const periodDuration = 3 * 24 * 60 * 60; // 3 days
+const periodBegin = 1691668800; // 2023-08-10 12:00:00 PM GMT
+const periodDuration = 7 * 24 * 60 * 60; // 7 days
 const bonusDuration = 1 * 24 * 60 * 60; // 1 day
-const vestingBegin = 1689944400; // 2023-03-21 12:00:00 AM CET
+const vestingBegin = 1689944400; // 2023-08-21 12:00:00 AM CET
 const vestingDuration = 1 * 365 * 24 * 60 * 60; // 1 year
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-    const addresses = hre.network.config.addresses;
+    const addresses = getNetworkConfigValue(hre, "addresses");
     if (!addresses) throw new Error("No addresses in config");
 
     const {
@@ -25,16 +25,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const { adminAccount } = await getNamedAccounts();
     const admin = await ethers.getSigner(adminAccount);
 
-    const mendi = await ethers.getContractAt(
-        "contracts/interfaces/IERC20.sol:IERC20",
-        mendiAddress
-    );
-
-    // USDC
-    const usdc = await ethers.getContractAt(
-        "contracts/interfaces/IERC20.sol:IERC20",
-        addresses.usdc
-    );
+    const mendi = await get("Mendi");
 
     // Distributor
     const vesterDeploy = await deploy("Vester", {
@@ -115,7 +106,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
             [
                 admin.address,
                 mendi.address,
-                usdc.address,
+                addresses.usdc,
                 addresses.msig,
                 distributor.address,
                 bonusDistributor.address,
@@ -145,6 +136,24 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
             await bonusDistributor.setAdmin(liquidityGenerator.address)
         ).wait(1);
     }
+
+    // LGE Depositor
+    const lgeDepositor = await deploy("LGEDepositor", {
+        from: admin.address,
+        log: true,
+        args: [
+            liquidityGenerator.address,
+            addresses.vault,
+            addresses.factory,
+            mendi.address,
+            addresses.usdc,
+            addresses.vc,
+        ],
+        contract: "contracts/LGEDepositor.sol:LGEDepositor",
+    });
+    await (
+        await liquidityGenerator._setReservesManager(lgeDepositor.address)
+    ).wait(1);
 };
 
 const tags = ["liquidity-generator"];
