@@ -99,7 +99,8 @@ contract LGEDepositor is AccessControl {
         removeLPInternal();
 
         sendAllInternal(vcToken, to);
-        sendAllInternal(mendiUSDCPoolToken, to);
+        sendAllInternal(mendiToken, to);
+        sendAllInternal(usdcToken, to);
     }
 
     /* Internal Liquidity Functions */
