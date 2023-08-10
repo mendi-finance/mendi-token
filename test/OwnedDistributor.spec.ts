@@ -1,9 +1,9 @@
-import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
+import { loadFixture, time } from "@nomicfoundation/hardhat-network-helpers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { BigNumber, Contract } from "ethers";
 import { ethers } from "hardhat";
-import { getImpersonatedSigner, getTokenContract, goToFixture } from "./_utils";
+import { getImpersonatedSigner, getTokenContract } from "./_utils";
 
 interface DeployFixture {
     admin: SignerWithAddress;
@@ -163,7 +163,7 @@ describe("Owned Distributor", function () {
             );
 
             // go to the last claim time
-            await loadFixture(goToFixture(lastClaim));
+            await time.increaseTo(lastClaim);
         });
 
         it("Should allow a user to claim their share", async function () {

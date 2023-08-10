@@ -1,15 +1,15 @@
 import { ethers } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { getNetworkConfigValue } from "../test/_utils";
+import { getNetworkConfigValue, getNetworkDeployment } from "../test/_utils";
 
 const liquidityAmount = ethers.utils.parseEther("2500000");
 const vestingAmount = ethers.utils.parseEther("3200000");
 const bonusVestingAmount = ethers.utils.parseEther("300000");
-const periodBegin = 1691668800; // 2023-08-10 12:00:00 PM GMT
+const periodBegin = 1691672400; // 2023-08-10 13:00:00 PM GMT
 const periodDuration = 7 * 24 * 60 * 60; // 7 days
 const bonusDuration = 1 * 24 * 60 * 60; // 1 day
-const vestingBegin = 1689944400; // 2023-08-21 12:00:00 AM CET
+const vestingBegin = 1692288000; // 2023-08-21 13:00:00 PM GMT
 const vestingDuration = 1 * 365 * 24 * 60 * 60; // 1 year
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
@@ -25,7 +25,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const { adminAccount } = await getNamedAccounts();
     const admin = await ethers.getSigner(adminAccount);
 
-    const mendi = await get("Mendi");
+    const mendi = await getNetworkDeployment(hre, "Mendi");
 
     // Distributor
     const vesterDeploy = await deploy("Vester", {

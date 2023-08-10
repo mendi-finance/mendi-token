@@ -34,10 +34,20 @@ const config: HardhatUserConfig = {
     },
     networks: {
         hardhat: {
+            accounts: [
+                {
+                    privateKey:
+                        process.env[
+                            `${process.env.FORKING_NETWORK?.toUpperCase()}_DEPLOYER`
+                        ]!,
+                    balance: "10000000000000000000000",
+                },
+            ],
             companionNetworks: {
                 mainnet: process.env.FORKING_NETWORK?.toLowerCase()!,
             },
             forking: {
+                blockNumber: 166350,
                 enabled: true,
                 url: process.env[
                     `${process.env.FORKING_NETWORK?.toUpperCase()}_RPC_URL`

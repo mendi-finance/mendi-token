@@ -1,14 +1,14 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-import { mendiTokenFixture, teamVestingFixture } from "../_fixtures";
+import { erc20TokenFixture, teamVestingFixture } from "../_fixtures";
 
 describe.skip("Owned Distributor Live", function () {
     const rewardPerSecond = ethers.utils.parseEther("100000000");
 
     describe("Constructor", function () {
         it("Should set the correct values", async function () {
-            const [mendiToken] = await mendiTokenFixture();
+            const [mendiToken] = await erc20TokenFixture();
             const { teamVester, teamDistributor } = await teamVestingFixture();
 
             expect(await teamDistributor.mendi()).to.equal(mendiToken.address);

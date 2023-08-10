@@ -74,6 +74,10 @@ contract LGEDepositor is AccessControl {
 
     function deposit() external {
         require(finalizeAt > 0, "LGEDepositor: NOT_FINALIZED");
+        require(
+            mendi.balanceOf(address(this)) >= 2_500_000e18,
+            "LGEDepositor: NOT_ENOUGH_MENDI"
+        );
 
         addLPInternal();
         stakeLPInternal();
@@ -92,15 +96,12 @@ contract LGEDepositor is AccessControl {
     function withdraw(address to) external onlyRole(DEFAULT_ADMIN_ROLE) {
         require(
             getBlockTimestamp() > finalizeAt + 180 days,
-            "LGEDepositor: NOT_FINALIZED"
+            "LGEDepositor: LP_LOCKED"
         );
 
         unstakeLPInternal();
-        removeLPInternal();
 
-        sendAllInternal(vcToken, to);
-        sendAllInternal(mendiToken, to);
-        sendAllInternal(usdcToken, to);
+        sendAllInternal(mendiUSDCPoolToken, to);
     }
 
     /* Internal Liquidity Functions */

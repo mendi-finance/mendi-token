@@ -8,9 +8,6 @@ type ERC20FixtureOutput = [Contract];
 type ERC20FixtureOptions = {
     contractKey?: string;
     contractArgs?: any[];
-    mockContractKey?: string;
-    mockSupply?: BigNumberish;
-    mockDecimals?: BigNumberish;
 };
 const erc20TokenFixture = deployments.createFixture<
     ERC20FixtureOutput,
@@ -45,21 +42,22 @@ const erc20TokenFixture = deployments.createFixture<
                 from: deployer.address,
                 args: options.contractArgs,
             });
+            tokenContract = await ethers.getContractAt(
+                options.contractKey,
+                tokenDeploy.address
+            );
         }
     }
 
     if (!tokenContract) {
         const [deployer] = await ethers.getSigners();
-        tokenDeploy = await deploy(
-            options?.mockContractKey || "MockERC20Token",
-            {
-                from: deployer.address,
-                args: [
-                    options?.mockSupply ?? ethers.utils.parseEther("1000"),
-                    options?.mockDecimals ?? 18,
-                ],
-            }
-        );
+        tokenDeploy = await deploy(options?.contractKey || "MockERC20Token", {
+            from: deployer.address,
+            args: options?.contractArgs ?? [
+                ethers.utils.parseEther("1000"),
+                18,
+            ],
+        });
         tokenContract = tokenContract = await ethers.getContractAt(
             "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20",
             tokenDeploy.address

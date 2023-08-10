@@ -1,6 +1,8 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { deploy } from "@openzeppelin/hardhat-upgrades/dist/utils";
 import { BigNumber } from "ethers";
 import { ethers, network } from "hardhat";
+import { Deployment } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 const soMath = {
@@ -63,9 +65,29 @@ const getNetworkConfigValue = (hre: HardhatRuntimeEnvironment, key: string) => {
     return addresses;
 };
 
+const getNetworkDeployment = async (
+    hre: HardhatRuntimeEnvironment,
+    key: string
+) => {
+    let deployment: Deployment | null = null;
+
+    if (Object.keys(hre.companionNetworks).indexOf("mainnet") > -1) {
+        deployment = await hre.companionNetworks[
+            "mainnet"
+        ].deployments.getOrNull(key);
+    }
+
+    if (!deployment) {
+        deployment = await hre.deployments.get(key);
+    }
+
+    return deployment;
+};
+
 export {
     getImpersonatedSigner,
     getNetworkConfigValue,
+    getNetworkDeployment,
     getTokenContract,
     soMath,
 };

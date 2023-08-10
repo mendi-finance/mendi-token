@@ -107,14 +107,25 @@ describe.only("Deneme Test", function () {
         await expect(liquidityGenerator.finalize()).to.not.reverted;
 
         // revert because no mendi on depositor
-        await expect(lgeDepositor.deposit()).to.reverted;
+        await expect(lgeDepositor.deposit()).to.revertedWith(
+            "LGEDepositor: NOT_ENOUGH_MENDI"
+        );
 
-        console.log((await mendi.balanceOf(deployer.address)).toString());
         // send mendi
         await expect(mendi.transfer(lgeDepositor.address, mendiDeposit)).to.not
             .reverted;
 
         // success deposit
         await expect(lgeDepositor.deposit()).to.not.reverted;
+
+        // revert withdraw before 6 months lp
+        await expect(lgeDepositor.withdraw(deployer.address)).to.revertedWith(
+            "LGEDepositor: LP_LOCKED"
+        );
+
+        await time.increase(180 * 24 * 60 * 60);
+
+        // success withdraw lp
+        await expect(lgeDepositor.withdraw(deployer.address)).to.not.reverted;
     });
 });

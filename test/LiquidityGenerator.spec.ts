@@ -1,14 +1,9 @@
-import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
+import { loadFixture, time } from "@nomicfoundation/hardhat-network-helpers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { BigNumber, Contract } from "ethers";
 import hre, { ethers } from "hardhat";
-import {
-    getImpersonatedSigner,
-    getTokenContract,
-    goToFixture,
-    soMath,
-} from "./_utils";
+import { getImpersonatedSigner, getTokenContract, soMath } from "./_utils";
 
 const mantissa = ethers.utils.parseEther("1");
 const mendiAmount = ethers.utils.parseEther("2500000");
@@ -286,7 +281,7 @@ describe("Liquidity Generator", function () {
     describe("Before Event Start", function () {
         this.beforeEach(async () => {
             const { periodBegin } = deployment;
-            await loadFixture(goToFixture(periodBegin - 1000));
+            await time.increaseTo(periodBegin - 1000);
         });
 
         it("Should not allow to deposit", async function () {
@@ -313,12 +308,12 @@ describe("Liquidity Generator", function () {
     describe("During Event", function () {
         this.beforeEach(async () => {
             const { periodBegin } = deployment;
-            await loadFixture(goToFixture(periodBegin + 10));
+            await time.increaseTo(periodBegin + 10);
         });
 
         it("Should deposit by participants", async function () {
             const { liquidityGenerator, periodBegin, usdc } = deployment;
-            await loadFixture(goToFixture(periodBegin));
+            await time.increaseTo(periodBegin);
 
             for (const participant of participants) {
                 await expect(
@@ -331,7 +326,7 @@ describe("Liquidity Generator", function () {
             }
 
             // end of bonus period
-            await loadFixture(goToFixture(periodBegin + bonusDuration + 10));
+            await time.increaseTo(periodBegin + bonusDuration + 10);
 
             for (const participant of participants) {
                 await expect(
@@ -378,7 +373,7 @@ describe("Liquidity Generator", function () {
         });
 
         it("Should not allow low deposit", async function () {
-            await loadFixture(goToFixture(deployment.periodBegin));
+            await time.increaseTo(deployment.periodBegin);
 
             for (const participant of participants) {
                 await expect(
@@ -403,7 +398,7 @@ describe("Liquidity Generator", function () {
     describe("After Event End", function () {
         this.beforeEach(async () => {
             const { periodBegin, periodEnd } = deployment;
-            await loadFixture(goToFixture(periodBegin + 1000));
+            await time.increaseTo(periodBegin + 1000);
 
             // Participates
             for (const participant of participants) {
@@ -414,7 +409,7 @@ describe("Liquidity Generator", function () {
                 );
             }
 
-            await loadFixture(goToFixture(periodEnd + 1000));
+            await time.increaseTo(periodEnd + 1000);
         });
 
         it("Should not allow to deposit", async function () {
