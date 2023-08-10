@@ -316,10 +316,9 @@ contract LGEDepositor is AccessControl {
 
     function _recover(address token) external onlyRole(DEFAULT_ADMIN_ROLE) {
         require(
-            getBlockTimestamp() > finalizeAt + 7 days,
+            finalizeAt == 0 || getBlockTimestamp() > finalizeAt + 7 days,
             "LGEDepositor: NOT_RECOVER_TIME"
         );
-        require(!deposited, "LGEDepositor: DEPOSIT_SUCCEEDED");
         uint256 amount = token.balanceOf(address(this));
         token.safeTransfer(msg.sender, amount);
     }

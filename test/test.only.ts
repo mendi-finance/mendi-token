@@ -66,6 +66,9 @@ describe.only("Deneme Test", function () {
             )
         ).to.not.reverted;
 
+        // success on recover
+        await expect(lgeDepositor._recover(mendi.address)).to.not.reverted;
+
         // revert before period begin
         await expect(liquidityGenerator.deposit(oneUSDC)).to.revertedWith(
             "LiquidityGenerator: TOO_SOON"
@@ -73,6 +76,9 @@ describe.only("Deneme Test", function () {
 
         // go to lge begin
         await time.increaseTo(periodBegin);
+
+        // revert on recover
+        await expect(lgeDepositor._recover(mendi.address)).to.not.reverted;
 
         // deposit 1 usdc revert < 10usdc
         await expect(liquidityGenerator.deposit(oneUSDC)).to.revertedWith(
@@ -117,6 +123,12 @@ describe.only("Deneme Test", function () {
 
         // success deposit
         await expect(lgeDepositor.deposit()).to.not.reverted;
+
+        // go to 1 week later
+        await time.increase(7 * 24 * 60 * 60);
+
+        // success on recover
+        await expect(lgeDepositor._recover(mendi.address)).to.not.reverted;
 
         // revert withdraw before 6 months lp
         await expect(lgeDepositor.withdraw(deployer.address)).to.revertedWith(
