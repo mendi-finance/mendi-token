@@ -182,7 +182,7 @@ contract LGEDepositor is AccessControl {
             0,
             mendiUSDCPoolToken,
             EXACTLY,
-            int128(int256(mentiUSDCPoolToken.addr().balanceOf(address(this))))
+            int128(int256(mendiUSDCPoolToken.addr().balanceOf(address(this))))
         );
 
         removeApproveInternal(mendiUSDCPoolToken, address(vault));
