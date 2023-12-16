@@ -49,6 +49,15 @@ const getImpersonatedSigner = async (account: string) => {
         method: "hardhat_impersonateAccount",
         params: [account],
     });
+
+    const newBalanceHex = ethers.utils
+        .parseEther("100")
+        .toHexString()
+        .replace("0x0", "0x");
+    await network.provider.request({
+        method: "hardhat_setBalance",
+        params: [account, newBalanceHex],
+    });
     return ethers.getSigner(account);
 };
 

@@ -34,7 +34,7 @@ const config: HardhatUserConfig = {
     },
     networks: {
         hardhat: {
-            accounts: [
+            /*accounts: [
                 {
                     privateKey:
                         process.env[
@@ -42,7 +42,7 @@ const config: HardhatUserConfig = {
                         ]!,
                     balance: "10000000000000000000000",
                 },
-            ],
+            ],*/
             companionNetworks: {
                 mainnet: process.env.FORKING_NETWORK?.toLowerCase()!,
             },

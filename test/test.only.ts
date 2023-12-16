@@ -6,7 +6,7 @@ import hre, { ethers } from "hardhat";
 import { erc20TokenFixture, lgeFixture } from "./_fixtures";
 import { getImpersonatedSigner, getNetworkConfigValue } from "./_utils";
 
-describe.only("Deneme Test", function () {
+describe("Deneme Test", function () {
     let deployer: SignerWithAddress,
         mendi: Contract,
         mendiAmount: BigNumber,

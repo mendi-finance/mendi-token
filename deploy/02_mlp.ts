@@ -2,7 +2,6 @@ import { DeployFunction } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-    return false;
     const {
         deployments: { deploy },
         getNamedAccounts,
@@ -10,14 +9,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
     const { adminAccount } = await getNamedAccounts();
 
-    const mendi = await deploy("Mendi", {
+    const mlp = await deploy("MendiLoyaltyPoint", {
         from: adminAccount,
         log: true,
-        args: [adminAccount],
+        args: [],
     });
 };
 
-const tags = ["mendi-token"];
+const tags = ["mlp"];
 export { tags };
 
 export default func;
