@@ -107,14 +107,17 @@ contract MendiLoyaltyPoint is AccessControl, SoulBoundToken {
     function mintWithPermit(
         address to,
         uint256 cumulativeAmount,
+        uint256 expire,
         bytes memory signature
     ) public {
+        require(expire > block.timestamp, "MLP: expired");
+
         address msgSender = _msgSender();
         if (msgSender != to) {
             require(hasRole(MINTER_ROLE, msgSender), "MLP: user or minter");
         }
 
-        bytes32 message = getSignMessage(to, cumulativeAmount);
+        bytes32 message = getSignMessage(to, cumulativeAmount, expire);
         require(verifySignature(message, signature), "MLP: not permitted");
         console.log("MLP");
 
@@ -137,9 +140,10 @@ contract MendiLoyaltyPoint is AccessControl, SoulBoundToken {
 
     function getSignMessage(
         address account,
-        uint256 cumulativeAmount
+        uint256 cumulativeAmount,
+        uint256 expire
     ) public pure returns (bytes32) {
-        return keccak256(abi.encode(account, cumulativeAmount));
+        return keccak256(abi.encode(account, cumulativeAmount, expire));
     }
 
     function verifySignature(

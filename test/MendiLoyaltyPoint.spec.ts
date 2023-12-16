@@ -73,19 +73,29 @@ describe.only("Mendi Loyalty Point", function () {
 
         it("Should revert on wrong signature", async function () {
             const fakeSignature = deployer.signMessage("fakeSig");
+            const expire =
+                (await ethers.provider.getBlock("latest")).timestamp + 5 * 60;
 
             await expect(
                 mlp
                     .connect(user)
-                    .mintWithPermit(userData[0], userData[1], fakeSignature)
+                    .mintWithPermit(
+                        userData[0],
+                        userData[1],
+                        expire,
+                        fakeSignature
+                    )
             ).to.revertedWith("MLP: not permitted");
         });
 
         it("Should mint on correct signature", async function () {
+            const expire =
+                (await ethers.provider.getBlock("latest")).timestamp + 5 * 60;
+
             var message = ethers.utils.keccak256(
                 ethers.utils.defaultAbiCoder.encode(
-                    ["address", "uint256"],
-                    userData
+                    ["address", "uint256", "uint256"],
+                    [...userData, expire]
                 )
             );
             var signature = await mintSigner.signMessage(
@@ -101,8 +111,35 @@ describe.only("Mendi Loyalty Point", function () {
             await expect(
                 mlp
                     .connect(user)
-                    .mintWithPermit(userData[0], userData[1], signature)
+                    .mintWithPermit(userData[0], userData[1], expire, signature)
             ).to.not.reverted;
+        });
+
+        it("Should not mint on expired", async function () {
+            const expire =
+                (await ethers.provider.getBlock("latest")).timestamp - 1;
+
+            var message = ethers.utils.keccak256(
+                ethers.utils.defaultAbiCoder.encode(
+                    ["address", "uint256", "uint256"],
+                    [...userData, expire]
+                )
+            );
+            var signature = await mintSigner.signMessage(
+                ethers.utils.arrayify(message)
+            );
+
+            await expect(
+                mlp
+                    .connect(deployer)
+                    .grantRole(mintSignerRole, mintSigner.address)
+            ).to.not.reverted;
+
+            await expect(
+                mlp
+                    .connect(user)
+                    .mintWithPermit(userData[0], userData[1], expire, signature)
+            ).to.revertedWith("MLP: expired");
         });
     });
 });
