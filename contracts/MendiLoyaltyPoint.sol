@@ -6,8 +6,6 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import "hardhat/console.sol";
-
 abstract contract SoulBoundToken is IERC20 {
     string public name;
     string public symbol;
@@ -37,26 +35,23 @@ abstract contract SoulBoundToken is IERC20 {
         return _balances[account];
     }
 
-    function transfer(address to, uint256 amount) public returns (bool) {
+    function transfer(address, uint256) public pure returns (bool) {
         revert("SBT: no transfer");
     }
 
-    function allowance(
-        address owner,
-        address spender
-    ) public view returns (uint256) {
+    function allowance(address, address) public pure returns (uint256) {
         return 0;
     }
 
-    function approve(address spender, uint256 amount) public returns (bool) {
+    function approve(address, uint256) public pure returns (bool) {
         revert("SBT: no approve");
     }
 
     function transferFrom(
-        address from,
-        address to,
-        uint256 amount
-    ) public returns (bool) {
+        address,
+        address,
+        uint256
+    ) public pure returns (bool) {
         revert("SBT: no transfer");
     }
 
@@ -95,8 +90,9 @@ contract MendiLoyaltyPoint is AccessControl, SoulBoundToken {
 
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant MINT_SIGNER_ROLE = keccak256("MINT_SIGNER_ROLE");
+    bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
 
-    mapping(address => uint256) private _minted;
+    mapping(address => uint256) public minted;
 
     constructor()
         SoulBoundToken("Mendi Loyalty Point", "MLP", 18, 1_000_000 * 10e18)
@@ -119,9 +115,8 @@ contract MendiLoyaltyPoint is AccessControl, SoulBoundToken {
 
         bytes32 message = getSignMessage(to, cumulativeAmount, expire);
         require(verifySignature(message, signature), "MLP: not permitted");
-        console.log("MLP");
 
-        uint256 oldMinted = _minted[to];
+        uint256 oldMinted = minted[to];
         require(cumulativeAmount > oldMinted, "MLP: nothing to mint");
 
         uint256 mintAmount;
@@ -130,12 +125,19 @@ contract MendiLoyaltyPoint is AccessControl, SoulBoundToken {
             mintAmount = cumulativeAmount - oldMinted;
         }
 
-        _minted[to] = cumulativeAmount;
+        minted[to] = cumulativeAmount;
         _mint(to, mintAmount);
     }
 
     function burn(uint256 amount) public {
         _burn(_msgSender(), amount);
+    }
+
+    function burnFrom(
+        address account,
+        uint256 amount
+    ) public onlyRole(BURNER_ROLE) {
+        _burn(account, amount);
     }
 
     function getSignMessage(

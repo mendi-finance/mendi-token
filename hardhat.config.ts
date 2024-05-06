@@ -8,6 +8,7 @@ import "@typechain/hardhat";
 import "hardhat-deploy";
 import { HardhatUserConfig } from "hardhat/config";
 import "solidity-coverage";
+import { ethers } from "ethers";
 
 const config: HardhatUserConfig = {
     solidity: {
@@ -17,7 +18,7 @@ const config: HardhatUserConfig = {
                 settings: {
                     optimizer: {
                         enabled: true,
-                        runs: 200,
+                        runs: 1000,
                     },
                 },
             },
@@ -26,7 +27,7 @@ const config: HardhatUserConfig = {
                 settings: {
                     optimizer: {
                         enabled: true,
-                        runs: 200,
+                        runs: 1000,
                     },
                 },
             },
@@ -59,6 +60,7 @@ const config: HardhatUserConfig = {
         linea: {
             chainId: 59144,
             url: process.env.LINEA_RPC_URL,
+            gasPrice: 1800000000,
             accounts: [process.env.LINEA_DEPLOYER!],
             verify: {
                 etherscan: {
